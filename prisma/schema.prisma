@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id          String    @id @default(uuid())
+  name        String
+  bloodType   String?   @map("blood_type")
+  age         Int?
+  dob         String?
+  insurance   String?
+  organDonor  Boolean   @default(false) @map("organ_donor")
+  allergies   String[]  @default([])
+  medications String[]  @default([])
+  conditions  String?
+  notes       String?
+  contacts    Json      @default("[]")
+  isActive    Boolean   @default(true)  @map("is_active")
+  scanCount   Int       @default(0)     @map("scan_count")
+  lastScanned DateTime?               @map("last_scanned")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt      @map("updated_at")
+  scanLogs    ScanLog[]
+
+  @@map("profiles")
+  @@index([createdAt(sort: Desc)])
+}
+
+model ScanLog {
+  id        Int      @id @default(autoincrement())
+  profileId String   @map("profile_id")
+  ip        String?
+  ua        String?
+  country   String?
+  scannedAt DateTime @default(now()) @map("scanned_at")
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@map("scan_logs")
+  @@index([profileId])
+}
