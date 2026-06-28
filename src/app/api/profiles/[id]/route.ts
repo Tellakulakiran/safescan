@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const profile = await prisma.profile.findUnique({
-    where: { id: params.id, isActive: true },
+    where: { id, isActive: true },
     select: {
       id: true, name: true, bloodType: true, age: true, dob: true,
       organDonor: true, allergies: true, medications: true,
@@ -20,9 +21,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const ua      = req.headers.get('user-agent') ?? null
   const country = req.headers.get('x-vercel-ip-country') ?? null
 
-  prisma.scanLog.create({ data: { profileId: params.id, ip, ua, country } }).catch(() => {})
+  prisma.scanLog.create({ data: { profileId: id, ip, ua, country } }).catch(() => {})
   prisma.profile.update({
-    where: { id: params.id },
+    where: { id },
     data: { scanCount: { increment: 1 }, lastScanned: new Date() },
   }).catch(() => {})
 
@@ -31,9 +32,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   })
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   try {
-    await prisma.profile.delete({ where: { id: params.id } })
+    await prisma.profile.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
