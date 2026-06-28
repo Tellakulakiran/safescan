@@ -46,6 +46,8 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
   const [places, setPlaces]             = useState<Record<Category, NearbyPlace[]>>({ hospitals: [], pharmacies: [], police: [] })
   const [loading, setLoading]           = useState(false)
   const [fetched, setFetched]           = useState(false)
+  const [showShare, setShowShare]       = useState(false)
+  const [shareToast, setShareToast]     = useState<string | null>(null)
 
   useEffect(() => {
     setIsOnline(navigator.onLine)
@@ -97,7 +99,7 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
         }
         setLoading(false)
       },
-      (err) => {
+      () => {
         setGeoError('Location access denied. Please allow location to find nearby services.')
         setLoading(false)
       },
@@ -105,13 +107,38 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
     )
   }
 
+  function handleShare() {
+    const profileUrl = `${window.location.origin}/p/${profile.id}`
+    if (navigator.share) {
+      navigator.share({
+        title: `${profile.name} — Emergency Profile`,
+        text: `Emergency medical profile for ${profile.name}. Blood type: ${profile.bloodType || 'Unknown'}`,
+        url: profileUrl,
+      }).catch(() => {})
+    } else {
+      setShowShare(true)
+    }
+  }
+
+  function copyProfileLink() {
+    const profileUrl = `${window.location.origin}/p/${profile.id}`
+    navigator.clipboard.writeText(profileUrl).then(() => {
+      setShareToast('Link copied!')
+      setTimeout(() => setShareToast(null), 2500)
+      setShowShare(false)
+    })
+  }
+
   const initials  = profile.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-  const subParts  = []
+  const subParts: string[]  = []
   if (profile.age)       subParts.push('Age ' + profile.age)
   if (profile.bloodType) subParts.push(profile.bloodType + ' Blood Type')
 
   const currentPlaces = places[activeTab]
   const { icon: tabIcon, color: tabColor } = CATEGORY_CONFIG[activeTab]
+
+  // Get first emergency contact for quick call
+  const primaryContact = profile.contacts?.[0]
 
   return (
     <>
@@ -141,7 +168,7 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
             </div>
           )}
 
-          {/* Emergency header */}
+          {/* ─── Emergency Header ─── */}
           <div className="em-hdr">
             <div className="em-tag"><div className="bdot" />EMERGENCY MEDICAL PROFILE</div>
             <div className="em-av">{initials}</div>
@@ -149,21 +176,78 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
             <div className="em-sub">{subParts.join(' · ')}</div>
           </div>
 
-          {/* Profile fields */}
+          {/* ─── Blood Type Mega Badge ─── */}
+          {profile.bloodType && (
+            <div className="blood-mega">
+              <div className="blood-label">🩸 Blood Type</div>
+              <div className="blood-value">{profile.bloodType}</div>
+            </div>
+          )}
+
+          {/* ─── Critical Alerts ─── */}
+          {(profile.allergies?.length > 0 || profile.conditions) && (
+            <>
+              <div className="section-label">⚠ Critical Alerts</div>
+              {profile.allergies?.length > 0 && (
+                <div className="glass-card-danger" style={{ padding: '16px 18px', marginBottom: 10 }}>
+                  <div className="vf-label" style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.14em', color: 'rgba(232,48,42,.8)', textTransform: 'uppercase' as const, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ animation: 'dotPulse 1.5s ease infinite' }}>⚠</span> Allergies — Critical
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8 }}>
+                    {profile.allergies.map((a, i) => (
+                      <span key={i} style={{
+                        background: 'rgba(232,48,42,.15)',
+                        border: '1px solid rgba(232,48,42,.35)',
+                        color: '#ff6b6b',
+                        borderRadius: 100,
+                        padding: '6px 14px',
+                        fontSize: '.82rem',
+                        fontWeight: 700,
+                      }}>{a}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {profile.conditions && (
+                <div className="glass-card-warn" style={{ padding: '16px 18px', marginBottom: 16 }}>
+                  <div style={{ fontSize: '.62rem', fontWeight: 800, letterSpacing: '.14em', color: 'rgba(245,158,11,.8)', textTransform: 'uppercase' as const, marginBottom: 8 }}>
+                    🏥 Medical Conditions
+                  </div>
+                  <div style={{ fontSize: '.95rem', fontWeight: 700, color: '#f59e0b' }}>{profile.conditions}</div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ─── Medications ─── */}
+          {profile.medications?.length > 0 && (
+            <>
+              <div className="section-label">💊 Current Medications</div>
+              <div className="glass-card-warn" style={{ padding: '16px 18px', marginBottom: 16 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 8 }}>
+                  {profile.medications.map((m, i) => (
+                    <span key={i} style={{
+                      background: 'rgba(245,158,11,.1)',
+                      border: '1px solid rgba(245,158,11,.3)',
+                      color: '#fbbf24',
+                      borderRadius: 100,
+                      padding: '6px 14px',
+                      fontSize: '.82rem',
+                      fontWeight: 700,
+                    }}>{m}</span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ─── Profile Details Grid ─── */}
+          <div className="section-label">📋 Profile Details</div>
           <ProfileFields profile={profile} />
 
           {/* ─── Nearby Emergency Services ─── */}
-          <div style={{
-            background: 'var(--bg2)',
-            border: '1px solid var(--border)',
-            borderRadius: 16,
-            padding: '22px 20px',
-            marginBottom: 16,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-              <span style={{ fontSize: '1.2rem' }}>📍</span>
-              <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-.01em' }}>Nearby Emergency Services</span>
-            </div>
+          <div className="section-label">📍 Nearby Emergency Services</div>
+          <div className="glass-card-strong" style={{ padding: '22px 20px', marginBottom: 16 }}>
 
             {!fetched && !loading && (
               <div style={{ textAlign: 'center' }}>
@@ -347,10 +431,10 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
             )}
           </div>
 
-          {/* Emergency Contacts */}
+          {/* ─── Emergency Contacts ─── */}
           {profile.contacts?.length > 0 && (
             <div className="cont-section">
-              <h3>Emergency Contacts</h3>
+              <div className="section-label">📞 Emergency Contacts</div>
               {profile.contacts.map((c, i) => (
                 <div key={i} className="cont-card">
                   <div>
@@ -366,6 +450,16 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
             </div>
           )}
 
+          {/* ─── Additional Info ─── */}
+          {profile.notes && (
+            <>
+              <div className="section-label">📝 Notes for Responders</div>
+              <div className="glass-card" style={{ padding: '16px 18px', marginBottom: 16 }}>
+                <div style={{ fontSize: '.92rem', lineHeight: 1.6, color: 'rgba(255,255,255,.85)' }}>{profile.notes}</div>
+              </div>
+            </>
+          )}
+
           <div className="vw-actions">
             <Link href="/" className="btn-ghost">← Back to SafeScan</Link>
             <Link href="/create" className="btn-red">Create My Own Profile</Link>
@@ -373,29 +467,66 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
 
         </div>
       </div>
+
+      {/* ─── Fixed Bottom Action Bar ─── */}
+      <div className="profile-bottom-bar">
+        <div className="profile-bottom-bar-inner">
+          {primaryContact && (
+            <a href={`tel:${primaryContact.phone.replace(/\s/g, '')}`} className="bottom-action primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.08 2.18 2 2 0 012.06 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              Call {primaryContact.name}
+            </a>
+          )}
+          <button onClick={handleShare} className="bottom-action secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+        </div>
+      </div>
+
+      {/* ─── Share Modal (fallback for non-native share) ─── */}
+      <div className={`share-modal-bg${showShare ? ' open' : ''}`} onClick={e => e.target === e.currentTarget && setShowShare(false)}>
+        <div className="share-modal">
+          <h3>Share Profile</h3>
+          <p>Share this emergency profile with family or caregivers</p>
+          <div className="share-options">
+            <button className="share-opt" onClick={copyProfileLink}>
+              <div className="share-ico" style={{ background: 'rgba(59,130,246,.15)', border: '1px solid rgba(59,130,246,.3)' }}>🔗</div>
+              Copy Link
+            </button>
+            <a className="share-opt" href={`mailto:?subject=Emergency Profile - ${profile.name}&body=View emergency medical profile: ${typeof window !== 'undefined' ? window.location.href : ''}`}>
+              <div className="share-ico" style={{ background: 'rgba(34,197,94,.15)', border: '1px solid rgba(34,197,94,.3)' }}>✉️</div>
+              Send via Email
+            </a>
+            <button className="share-opt" onClick={() => setShowShare(false)} style={{ justifyContent: 'center', color: 'var(--muted)' }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Share toast */}
+      {shareToast && <div className="toast show ok">{shareToast}</div>}
     </>
   )
 }
 
 function ProfileFields({ profile }: { profile: Profile }) {
   const fields = [
-    profile.bloodType  && { lbl: '🩸 Blood Type',           val: profile.bloodType,               cls: 'crit',           danger: true },
-    profile.age        && { lbl: 'Age',                      val: profile.age + ' years',           cls: '' },
-    profile.organDonor && { lbl: 'Organ Donor',              val: '✓ Yes',                          cls: '' },
-    profile.dob        && { lbl: 'Date of Birth',            val: profile.dob,                      cls: '' },
-    profile.insurance  && { lbl: 'Insurance',                val: profile.insurance,                cls: 'full' },
-    profile.allergies?.length  && { lbl: '⚠ Allergies',          val: profile.allergies.join(', '),    cls: 'crit full',        danger: true },
-    profile.medications?.length && { lbl: '💊 Medications',        val: profile.medications.join(', '),  cls: 'crit-yellow full', warn: true },
-    profile.conditions && { lbl: 'Medical Conditions',       val: profile.conditions,               cls: 'full' },
-    profile.notes      && { lbl: '📋 Notes for Responders',  val: profile.notes,                    cls: 'full' },
-  ].filter(Boolean) as { lbl: string; val: string; cls: string; danger?: boolean; warn?: boolean }[]
+    profile.age        && { lbl: 'Age',              val: profile.age + ' years',   cls: '' },
+    profile.organDonor && { lbl: 'Organ Donor',      val: '✓ Registered Donor',     cls: '' },
+    profile.dob        && { lbl: 'Date of Birth',    val: profile.dob,              cls: '' },
+    profile.insurance  && { lbl: 'Insurance',        val: profile.insurance,        cls: 'full' },
+  ].filter(Boolean) as { lbl: string; val: string; cls: string }[]
+
+  if (fields.length === 0) return null
 
   return (
-    <div className="vw-grid">
+    <div className="vw-grid" style={{ marginBottom: 20 }}>
       {fields.map((f, i) => (
-        <div key={i} className={`vf ${f.cls}`}>
+        <div key={i} className={`vf delay-${i + 1}`} style={{ animationFillMode: 'both' }}>
           <div className="lbl">{f.lbl}</div>
-          <div className={`val ${f.danger ? 'danger' : f.warn ? 'warn' : ''}`}>{f.val}</div>
+          <div className="val">{f.val}</div>
         </div>
       ))}
     </div>

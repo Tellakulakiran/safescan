@@ -22,7 +22,7 @@ export default function HomePage() {
         <div className="hero-l">
           <div className="badge-pill"><div className="bdot" />Emergency Ready</div>
           <h1 className="h1">Your <span className="red">Silent</span><br />Guardian</h1>
-          <p className="hsub">When you can't speak, your phone speaks for you. One QR scan gives first responders everything they need.</p>
+          <p className="hsub">When you can&apos;t speak, your phone speaks for you. One QR scan gives first responders everything they need.</p>
           <svg className="hb" style={{display:'block',width:220,height:36,marginBottom:32}} viewBox="0 0 220 36" fill="none">
             <path d="M0 18 L45 18 L52 18 L60 4 L70 32 L78 10 L85 26 L91 18 L220 18" stroke="#e8302a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.65"/>
           </svg>
@@ -74,7 +74,7 @@ export default function HomePage() {
         <p className="sdesc">When every second counts, SafeScan eliminates every barrier between a first responder and the information they need.</p>
         <div className="pcards">
           <span className="arr arr1">→</span><span className="arr arr2">→</span>
-          <div className="pcard"><div className="pnum">01</div><div className="pico">📱</div><h3>Scan the QR</h3><p>Any smartphone camera scans the QR on the victim's locked screen. No app needed. Works offline too.</p></div>
+          <div className="pcard"><div className="pnum">01</div><div className="pico">📱</div><h3>Scan the QR</h3><p>Any smartphone camera scans the QR on the victim&apos;s locked screen. No app needed. Works offline too.</p></div>
           <div className="pcard"><div className="pnum">02</div><div className="pico">🪪</div><h3>View Profile</h3><p>An instant emergency profile opens — blood type, allergies, medications, and contacts with one-tap call buttons.</p></div>
           <div className="pcard"><div className="pnum">03</div><div className="pico">🚨</div><h3>Help Arrives</h3><p>First responders have everything they need to act fast — no delay, no guessing, no language barrier.</p></div>
         </div>
@@ -90,7 +90,7 @@ export default function HomePage() {
             <div className="fcard"><span className="fico">🔗</span><h4>Real URL per Profile</h4><p>Every profile gets a unique public URL. Scanning the QR opens a full, beautifully designed page — on any device.</p></div>
             <div className="fcard"><span className="fico">📵</span><h4>Works Offline Too</h4><p>No internet? The QR still shows your full emergency info as plain readable text. Nothing is hidden.</p></div>
             <div className="fcard"><span className="fico">👤</span><h4>No Account Needed</h4><p>Set up in 60 seconds. No email, no password, no sign-up — just fill and generate your QR.</p></div>
-            <div className="fcard"><span className="fico">💾</span><h4>Cloud Saved</h4><p>Your profiles are stored in a real database. Access them from any device, any time.</p></div>
+            <div className="fcard"><span className="fico">📲</span><h4>Install as App</h4><p>Add SafeScan to your home screen. It works like a native app — with offline support, instant loading, and no app store needed.</p></div>
             <div className="fcard"><span className="fico">💊</span><h4>Full Medical Profile</h4><p>Blood type, allergies, medications, conditions, and emergency contacts — everything in one scan.</p></div>
             <div className="fcard"><span className="fico">📞</span><h4>One-Tap Call Buttons</h4><p>Emergency contacts appear with instant call buttons. Tapping calls directly from the page.</p></div>
           </div>
@@ -122,9 +122,33 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* INSTALL APP CTA */}
+      <section className="hsec alt" id="install" style={{textAlign:'center'}}>
+        <div style={{maxWidth:600,margin:'0 auto'}}>
+          <div className="eyebrow">Install the App</div>
+          <h2 className="stitle">Always <span className="red">One Tap</span> Away</h2>
+          <p className="sdesc">Install SafeScan on your phone like a real app. No app store, no downloads — just instant access from your home screen.</p>
+          <div style={{display:'flex',gap:18,justifyContent:'center',flexWrap:'wrap',marginBottom:32}}>
+            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:14,padding:'22px 24px',flex:'1 1 200px',maxWidth:260,textAlign:'center'}}>
+              <div style={{fontSize:'2rem',marginBottom:10}}>🤖</div>
+              <h4 style={{fontSize:'.92rem',fontWeight:700,marginBottom:6}}>Android</h4>
+              <p style={{fontSize:'.78rem',color:'var(--muted)',lineHeight:1.6}}>Tap the &quot;Install&quot; banner or use browser menu → &quot;Add to Home Screen&quot;</p>
+            </div>
+            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:14,padding:'22px 24px',flex:'1 1 200px',maxWidth:260,textAlign:'center'}}>
+              <div style={{fontSize:'2rem',marginBottom:10}}>🍎</div>
+              <h4 style={{fontSize:'.92rem',fontWeight:700,marginBottom:6}}>iPhone / iPad</h4>
+              <p style={{fontSize:'.78rem',color:'var(--muted)',lineHeight:1.6}}>Open in Safari → Tap share icon → &quot;Add to Home Screen&quot;</p>
+            </div>
+          </div>
+          <p style={{fontSize:'.82rem',color:'var(--muted2)',lineHeight:1.6}}>
+            Once installed, SafeScan opens instantly — no browser bar, full-screen experience, works offline.
+          </p>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="ctasec">
-        <h2>Don't Wait for an<br /><span className="red">Emergency</span></h2>
+        <h2>Don&apos;t Wait for an<br /><span className="red">Emergency</span></h2>
         <p>Set up your free emergency profile in 60 seconds. It costs nothing and could save everything.</p>
         <Link href="/create" className="btn-red" style={{fontSize:'1rem',padding:'17px 34px',margin:'0 auto'}}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="17" y="17" width="3" height="3"/></svg>

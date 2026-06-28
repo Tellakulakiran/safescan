@@ -1,0 +1,54 @@
+{
+  "name": "SafeScan — Emergency Medical Profile",
+  "short_name": "SafeScan",
+  "description": "Your silent guardian in emergencies. Instant access to medical profiles via QR.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e8302a",
+  "categories": ["medical", "health", "emergency"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Profile",
+      "short_name": "Create",
+      "url": "/create",
+      "description": "Create a new emergency medical profile",
+      "icons": [
+        {
+          "src": "/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Home",
+      "short_name": "Home",
+      "url": "/",
+      "description": "Go to SafeScan home",
+      "icons": [
+        {
+          "src": "/icon.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}

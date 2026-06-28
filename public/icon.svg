@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff4a44;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e8302a;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Shield shape -->
+  <path d="M256 28 L462 100 C462 100 472 300 256 484 C40 300 50 100 50 100 Z" 
+        fill="url(#shieldGrad)" 
+        stroke="#b8201c" 
+        stroke-width="4"
+        filter="url(#shadow)"/>
+  <!-- Inner shield highlight -->
+  <path d="M256 56 L438 118 C438 118 446 290 256 456 C66 290 74 118 74 118 Z" 
+        fill="none" 
+        stroke="rgba(255,255,255,0.15)" 
+        stroke-width="3"/>
+  <!-- SS Text -->
+  <text x="256" y="290" 
+        font-family="Arial, Helvetica, sans-serif" 
+        font-weight="900" 
+        font-size="200" 
+        fill="#ffffff" 
+        text-anchor="middle" 
+        dominant-baseline="central"
+        letter-spacing="-8">SS</text>
+</svg>

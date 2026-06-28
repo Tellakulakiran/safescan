@@ -192,22 +192,61 @@ export default function CreatePage() {
           {/* QR Success */}
           {success && (
             <div className="qr-success show">
-              <div style={{fontSize:'2rem',marginBottom:10}}>✅</div>
-              <h2>Profile Created!</h2>
-              <p>Your profile is live at a permanent URL. Share or scan the QR — works on any device.</p>
-              <div className="qr-box"><img src={success.qrImg} alt="QR Code" width={240} height={240} /></div>
-              <div className="qr-url-box">
+              <div style={{fontSize:'2.5rem',marginBottom:12,animation:'fadeInScale .4s ease both'}}>🎉</div>
+              <h2 style={{fontSize:'1.5rem',marginBottom:6}}>Profile Created!</h2>
+              <p style={{marginBottom:24}}>Your emergency profile is live. Scan or share the QR — works on any device, even offline.</p>
+              
+              <div className="qr-box" style={{animation:'fadeInScale .5s .1s ease both'}}>
+                <div style={{position:'relative'}}>
+                  <img src={success.qrImg} alt="QR Code" width={240} height={240} style={{borderRadius:12}} />
+                  <div style={{position:'absolute',bottom:-8,left:'50%',transform:'translateX(-50%)',background:'var(--red)',color:'white',fontSize:'.65rem',fontWeight:800,padding:'3px 12px',borderRadius:100,letterSpacing:'.08em',whiteSpace:'nowrap'}}>SCAN ME</div>
+                </div>
+              </div>
+              
+              <div className="qr-url-box" style={{marginTop:16}}>
                 <span>{success.url}</span>
                 <button className="btn-ghost" style={{padding:'4px 12px',fontSize:'.75rem',flexShrink:0}}
                   onClick={() => { navigator.clipboard.writeText(success.url); showToast('URL copied!','ok') }}>
                   Copy
                 </button>
               </div>
-              <div className="qr-btns">
-                <button className="btn-red" onClick={downloadQR}>⬇ Download QR</button>
-                <Link href={`/p/${success.id}`} className="btn-red" style={{background:'#2a2a2a',border:'1px solid rgba(255,255,255,.12)'}} target="_blank">👁 Preview</Link>
-                <button className="btn-ghost" onClick={resetForm}>＋ New Profile</button>
+              
+              <div className="qr-btns" style={{marginBottom:20}}>
+                <button className="btn-red" onClick={downloadQR}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  Download QR
+                </button>
+                <Link href={`/p/${success.id}`} className="btn-red" style={{background:'#2a2a2a',border:'1px solid rgba(255,255,255,.12)'}} target="_blank">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Preview
+                </Link>
+                <button className="btn-ghost" onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: 'My SafeScan Emergency Profile', url: success.url }).catch(() => {})
+                  } else {
+                    navigator.clipboard.writeText(success.url); showToast('Link copied!','ok')
+                  }
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                  Share
+                </button>
               </div>
+
+              {/* Lock Screen Tip */}
+              <div style={{background:'rgba(59,130,246,.08)',border:'1px solid rgba(59,130,246,.25)',borderRadius:14,padding:'18px 20px',textAlign:'left',marginBottom:16}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+                  <span style={{fontSize:'1.1rem'}}>📱</span>
+                  <span style={{fontSize:'.82rem',fontWeight:800,color:'#60a5fa'}}>Pro Tip: Set as Lock Screen</span>
+                </div>
+                <ol style={{fontSize:'.78rem',color:'rgba(255,255,255,.7)',lineHeight:1.8,paddingLeft:18,margin:0}}>
+                  <li>Download the QR image above</li>
+                  <li>Open your phone Settings → Wallpaper</li>
+                  <li>Set the QR as your lock screen wallpaper</li>
+                  <li>Responders can scan it without unlocking your phone!</li>
+                </ol>
+              </div>
+
+              <button className="btn-ghost" onClick={resetForm} style={{width:'100%',justifyContent:'center'}}>＋ Create Another Profile</button>
             </div>
           )}
         </div>
