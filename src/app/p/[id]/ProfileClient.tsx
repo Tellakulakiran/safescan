@@ -60,11 +60,11 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
 
   async function fetchCategory(cat: Category, lat: number, lon: number): Promise<NearbyPlace[]> {
     const amenity = CATEGORY_CONFIG[cat].amenity
-    const radius  = 5000
-    // Query nodes, ways, and relations around the coordinate, returning centers for ways/relations
-    const query   = `[out:json][timeout:15];(node["amenity"="${amenity}"](around:${radius},${lat},${lon});way["amenity"="${amenity}"](around:${radius},${lat},${lon});relation["amenity"="${amenity}"](around:${radius},${lat},${lon}););out center 10;`
-    const url     = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`
+    const url     = `/api/nearby?lat=${lat}&lon=${lon}&amenity=${amenity}`
     const res     = await fetch(url)
+    if (!res.ok) {
+      throw new Error(`Failed to load: ${res.statusText}`)
+    }
     const data    = await res.json()
     return (data.elements || [])
       .map((el: any) => {
