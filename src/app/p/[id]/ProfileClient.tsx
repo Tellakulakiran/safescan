@@ -61,19 +61,25 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
   async function fetchCategory(cat: Category, lat: number, lon: number): Promise<NearbyPlace[]> {
     const amenity = CATEGORY_CONFIG[cat].amenity
     const radius  = 5000
-    const query   = `[out:json][timeout:10];node["amenity"="${amenity}"](around:${radius},${lat},${lon});out 10;`
+    // Query nodes, ways, and relations around the coordinate, returning centers for ways/relations
+    const query   = `[out:json][timeout:15];(node["amenity"="${amenity}"](around:${radius},${lat},${lon});way["amenity"="${amenity}"](around:${radius},${lat},${lon});relation["amenity"="${amenity}"](around:${radius},${lat},${lon}););out center 10;`
     const url     = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`
     const res     = await fetch(url)
     const data    = await res.json()
     return (data.elements || [])
-      .map((el: any) => ({
-        id:       el.id,
-        name:     el.tags?.name || el.tags?.['name:en'] || (amenity === 'hospital' ? 'Hospital' : amenity === 'pharmacy' ? 'Medical Store' : 'Police Station'),
-        lat:      el.lat,
-        lon:      el.lon,
-        phone:    el.tags?.phone || el.tags?.['contact:phone'] || null,
-        distance: haversineDistance(lat, lon, el.lat, el.lon),
-      }))
+      .map((el: any) => {
+        const itemLat = el.lat ?? el.center?.lat
+        const itemLon = el.lon ?? el.center?.lon
+        return {
+          id:       el.id,
+          name:     el.tags?.name || el.tags?.['name:en'] || (amenity === 'hospital' ? 'Hospital' : amenity === 'pharmacy' ? 'Medical Store' : 'Police Station'),
+          lat:      itemLat,
+          lon:      itemLon,
+          phone:    el.tags?.phone || el.tags?.['contact:phone'] || null,
+          distance: haversineDistance(lat, lon, itemLat, itemLon),
+        }
+      })
+      .filter((place: NearbyPlace) => place.lat !== undefined && place.lon !== undefined)
       .sort((a: NearbyPlace, b: NearbyPlace) => (a.distance ?? 0) - (b.distance ?? 0))
       .slice(0, 6)
   }
@@ -81,6 +87,14 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
   async function loadNearby() {
     setGeoError(null)
     setLoading(true)
+    
+    // Check if geolocation is available (blocked by browsers on non-HTTPS origins)
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      setGeoError('Geolocation requires a secure connection (HTTPS) on mobile devices, or localhost on computer.')
+      setLoading(false)
+      return
+    }
+
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const lat = pos.coords.latitude
@@ -99,11 +113,17 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
         }
         setLoading(false)
       },
-      () => {
-        setGeoError('Location access denied. Please allow location to find nearby services.')
+      (err) => {
+        if (err.code === 1) {
+          setGeoError('Location access denied. Please allow location to find nearby services.')
+        } else if (err.code === 3) {
+          setGeoError('Location request timed out. Please try again.')
+        } else {
+          setGeoError('Could not obtain your location. Make sure GPS is enabled.')
+        }
         setLoading(false)
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: false, timeout: 12000 }
     )
   }
 
