@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         id:          uuid(),
         name:        name.trim(),
         bloodType:   bloodType || null,
-        age:         age ? parseInt(age) : null,
+        age:         age !== undefined && age !== null ? parseInt(String(age)) : null,
         dob:         dob || null,
         insurance:   insurance || null,
         organDonor:  Boolean(organDonor),

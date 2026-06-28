@@ -30,8 +30,11 @@ export default async function ProfilePage({ params }: Props) {
 
   if (!raw) notFound()
 
-  prisma.scanLog.create({ data: { profileId: id } }).catch(() => {})
-  prisma.profile.update({ where: { id }, data: { scanCount: { increment: 1 }, lastScanned: new Date() } }).catch(() => {})
+  // Await operations in parallel to guarantee logging completes in serverless environments
+  await Promise.allSettled([
+    prisma.scanLog.create({ data: { profileId: id } }),
+    prisma.profile.update({ where: { id }, data: { scanCount: { increment: 1 }, lastScanned: new Date() } })
+  ])
 
   const profile = {
     ...raw,

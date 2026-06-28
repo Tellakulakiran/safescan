@@ -21,11 +21,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const ua      = req.headers.get('user-agent') ?? null
   const country = req.headers.get('x-vercel-ip-country') ?? null
 
-  prisma.scanLog.create({ data: { profileId: id, ip, ua, country } }).catch(() => {})
-  prisma.profile.update({
-    where: { id },
-    data: { scanCount: { increment: 1 }, lastScanned: new Date() },
-  }).catch(() => {})
+  // Await logging operations to guarantee execution in serverless environments
+  await Promise.allSettled([
+    prisma.scanLog.create({ data: { profileId: id, ip, ua, country } }),
+    prisma.profile.update({
+      where: { id },
+      data: { scanCount: { increment: 1 }, lastScanned: new Date() },
+    })
+  ])
 
   return NextResponse.json(profile, {
     headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },

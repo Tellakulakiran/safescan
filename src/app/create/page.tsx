@@ -78,8 +78,6 @@ export default function CreatePage() {
       })
       setSuccess({ id: data.id, url: profileUrl, qrImg })
       showToast('✅ Profile saved & QR ready!', 'ok')
-      // Hide bottom bar
-      document.getElementById('ep-bar')!.style.display = 'none'
     } catch {
       showToast('Network error. Try again.', 'err')
     }
@@ -105,7 +103,6 @@ export default function CreatePage() {
     if (blood) blood.value = ''
     const organ = document.getElementById('ep-organ') as HTMLInputElement
     if (organ) organ.checked = false
-    document.getElementById('ep-bar')!.style.display = 'block'
     window.scrollTo(0,0)
   }
 
@@ -126,71 +123,72 @@ export default function CreatePage() {
           </div>
           <p className="ep-subtitle">Saved to cloud — scan the QR from any device, anywhere.</p>
 
-          {/* Basic Info */}
-          <div className="ep-card">
-            <div className="ep-card-hd"><span style={{color:'var(--red)'}}>👤</span> Basic Information</div>
-            <div className="ep-field"><label className="ep-lbl">Full Name *</label><input className="ep-in" type="text" id="ep-name" placeholder="Your full name" /></div>
-            <div className="ep-field">
-              <label className="ep-lbl">Blood Group *</label>
-              <select className="ep-in" id="ep-blood">
-                <option value="">Select blood group</option>
-                {['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].map(b => <option key={b}>{b}</option>)}
-              </select>
-            </div>
-            <div className="ep-field"><label className="ep-lbl">Date of Birth</label><input className="ep-in" type="date" id="ep-dob" /></div>
-            <div className="ep-field"><label className="ep-lbl">Insurance Info</label><input className="ep-in" type="text" id="ep-insurance" placeholder="Insurance provider / ID" /></div>
-            <div className="ep-field">
-              <div className="toggle-row">
-                <div className="toggle-lbl"><span style={{color:'var(--red)'}}>🫀</span> Organ Donor</div>
-                <label className="tswitch"><input type="checkbox" id="ep-organ" /><div className="ttrack" /></label>
-              </div>
-            </div>
-          </div>
-
-          {/* Medical Alerts */}
-          <div className="ep-card">
-            <div className="ep-card-hd"><span style={{color:'var(--red)'}}>⚠️</span> Medical Alerts</div>
-            <div className="ep-field">
-              <label className="ep-lbl">Allergies</label>
-              <div className="add-row">
-                <input ref={allergyRef} className="ep-in" type="text" placeholder="Add allergy" value={allergyInp}
-                  onChange={e => setAllergyInp(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('allergy'))} />
-                <button className="add-btn" onClick={() => addTag('allergy')}>+</button>
-              </div>
-              <div className="tags">{allergies.map((t,i) => <span key={i} className="tag">{t}<button className="tag-x" onClick={() => setAllergies(a => a.filter((_,j)=>j!==i))}>×</button></span>)}</div>
-            </div>
-            <div className="ep-field">
-              <label className="ep-lbl">Medications</label>
-              <div className="add-row">
-                <input ref={medRef} className="ep-in" type="text" placeholder="Add medication" value={medInp}
-                  onChange={e => setMedInp(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('med'))} />
-                <button className="add-btn" onClick={() => addTag('med')}>+</button>
-              </div>
-              <div className="tags">{meds.map((t,i) => <span key={i} className="tag">{t}<button className="tag-x" onClick={() => setMeds(m => m.filter((_,j)=>j!==i))}>×</button></span>)}</div>
-            </div>
-            <div className="ep-field"><label className="ep-lbl">Medical Conditions</label><input className="ep-in" type="text" id="ep-conditions" placeholder="e.g. Diabetes, Epilepsy, Asthma" /></div>
-            <div className="ep-field"><label className="ep-lbl">Notes for First Responders</label><input className="ep-in" type="text" id="ep-notes" placeholder="Any critical info for responders..." /></div>
-          </div>
-
-          {/* Emergency Contacts */}
-          <div className="ep-card">
-            <div className="ep-card-hd"><span style={{color:'var(--red)'}}>📞</span> Emergency Contacts *</div>
-            {contacts.map((c,i) => (
-              <div key={i} className="contact-card">
-                <div className="cc-info">
-                  <div className="cc-name">{c.name}</div>
-                  <div className="cc-meta">{c.phone}{c.rel ? ' · '+c.rel : ''}</div>
+          {!success ? (
+            <>
+              {/* Basic Info */}
+              <div className="ep-card">
+                <div className="ep-card-hd"><span style={{color:'var(--red)'}}>👤</span> Basic Information</div>
+                <div className="ep-field"><label className="ep-lbl">Full Name *</label><input className="ep-in" type="text" id="ep-name" placeholder="Your full name" /></div>
+                <div className="ep-field">
+                  <label className="ep-lbl">Blood Group *</label>
+                  <select className="ep-in" id="ep-blood">
+                    <option value="">Select blood group</option>
+                    {['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].map(b => <option key={b}>{b}</option>)}
+                  </select>
                 </div>
-                <button className="cc-rm" onClick={() => setContacts(cs => cs.filter((_,j)=>j!==i))}>✕</button>
+                <div className="ep-field"><label className="ep-lbl">Date of Birth</label><input className="ep-in" type="date" id="ep-dob" /></div>
+                <div className="ep-field"><label className="ep-lbl">Insurance Info</label><input className="ep-in" type="text" id="ep-insurance" placeholder="Insurance provider / ID" /></div>
+                <div className="ep-field">
+                  <div className="toggle-row">
+                    <div className="toggle-lbl"><span style={{color:'var(--red)'}}>🫀</span> Organ Donor</div>
+                    <label className="tswitch"><input type="checkbox" id="ep-organ" /><div className="ttrack" /></label>
+                  </div>
+                </div>
               </div>
-            ))}
-            <button className="add-contact-btn" onClick={() => setShowCM(true)}><span style={{fontSize:'1.1rem'}}>+</span> Add Contact</button>
-          </div>
 
-          {/* QR Success */}
-          {success && (
+              {/* Medical Alerts */}
+              <div className="ep-card">
+                <div className="ep-card-hd"><span style={{color:'var(--red)'}}>⚠️</span> Medical Alerts</div>
+                <div className="ep-field">
+                  <label className="ep-lbl">Allergies</label>
+                  <div className="add-row">
+                    <input ref={allergyRef} className="ep-in" type="text" placeholder="Add allergy" value={allergyInp}
+                      onChange={e => setAllergyInp(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('allergy'))} />
+                    <button className="add-btn" onClick={() => addTag('allergy')}>+</button>
+                  </div>
+                  <div className="tags">{allergies.map((t,i) => <span key={i} className="tag">{t}<button className="tag-x" onClick={() => setAllergies(a => a.filter((_,j)=>j!==i))}>×</button></span>)}</div>
+                </div>
+                <div className="ep-field">
+                  <label className="ep-lbl">Medications</label>
+                  <div className="add-row">
+                    <input ref={medRef} className="ep-in" type="text" placeholder="Add medication" value={medInp}
+                      onChange={e => setMedInp(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('med'))} />
+                    <button className="add-btn" onClick={() => addTag('med')}>+</button>
+                  </div>
+                  <div className="tags">{meds.map((t,i) => <span key={i} className="tag">{t}<button className="tag-x" onClick={() => setMeds(m => m.filter((_,j)=>j!==i))}>×</button></span>)}</div>
+                </div>
+                <div className="ep-field"><label className="ep-lbl">Medical Conditions</label><input className="ep-in" type="text" id="ep-conditions" placeholder="e.g. Diabetes, Epilepsy, Asthma" /></div>
+                <div className="ep-field"><label className="ep-lbl">Notes for First Responders</label><input className="ep-in" type="text" id="ep-notes" placeholder="Any critical info for responders..." /></div>
+              </div>
+
+              {/* Emergency Contacts */}
+              <div className="ep-card">
+                <div className="ep-card-hd"><span style={{color:'var(--red)'}}>📞</span> Emergency Contacts *</div>
+                {contacts.map((c,i) => (
+                  <div key={i} className="contact-card">
+                    <div className="cc-info">
+                      <div className="cc-name">{c.name}</div>
+                      <div className="cc-meta">{c.phone}{c.rel ? ' · '+c.rel : ''}</div>
+                    </div>
+                    <button className="cc-rm" onClick={() => setContacts(cs => cs.filter((_,j)=>j!==i))}>✕</button>
+                  </div>
+                ))}
+                <button className="add-contact-btn" onClick={() => setShowCM(true)}><span style={{fontSize:'1.1rem'}}>+</span> Add Contact</button>
+              </div>
+            </>
+          ) : (
             <div className="qr-success show">
               <div style={{fontSize:'2.5rem',marginBottom:12,animation:'fadeInScale .4s ease both'}}>🎉</div>
               <h2 style={{fontSize:'1.5rem',marginBottom:6}}>Profile Created!</h2>
@@ -252,13 +250,15 @@ export default function CreatePage() {
         </div>
 
         {/* Fixed bottom bar */}
-        <div className="ep-bar" id="ep-bar">
-          <div className="ep-bar-inner">
-            <button className="ep-gen-btn" onClick={handleSubmit} disabled={loading}>
-              {loading ? <><span className="spin" />Saving...</> : 'Save & Generate QR Code'}
-            </button>
+        {!success && (
+          <div className="ep-bar" id="ep-bar">
+            <div className="ep-bar-inner">
+              <button className="ep-gen-btn" onClick={handleSubmit} disabled={loading}>
+                {loading ? <><span className="spin" />Saving...</> : 'Save & Generate QR Code'}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Contact Modal */}
