@@ -163,9 +163,12 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
   return (
     <>
       <nav className="top-nav">
-        <Link href="/" className="nav-logo"><div className="logo-icon">🛡</div>SafeScan</Link>
+        <Link href="/" className="nav-logo">
+          <div className="logo-icon" style={{ background: 'var(--accent)', boxShadow: '0 0 10px var(--accent-glow)' }}>🛡</div>
+          SafeScan
+        </Link>
         <ul className="nav-links">
-          <li><Link href="/create" className="nav-cta">Create Mine</Link></li>
+          <li><Link href="/create" className="nav-cta" style={{ background: 'var(--accent)!important' }}>Create Mine</Link></li>
         </ul>
       </nav>
 
@@ -267,7 +270,7 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
 
           {/* ─── Nearby Emergency Services ─── */}
           <div className="section-label">📍 Nearby Emergency Services</div>
-          <div className="glass-card-strong" style={{ padding: '22px 20px', marginBottom: 16 }}>
+          <div id="nearby-section" className="glass-card-strong" style={{ padding: '22px 20px', marginBottom: 16 }}>
 
             {!fetched && !loading && (
               <div style={{ textAlign: 'center' }}>
@@ -306,46 +309,24 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                       <button
                         key={cat}
                         onClick={() => setActiveTab(cat)}
-                        style={{
-                          background: isActive ? cfg.color : 'var(--bg3)',
-                          color: isActive ? 'white' : 'var(--muted)',
-                          border: `1.5px solid ${isActive ? cfg.color : 'var(--border)'}`,
-                          borderRadius: 100,
-                          padding: '7px 16px',
-                          fontSize: '.8rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          fontFamily: 'inherit',
-                          transition: 'all .2s',
-                        }}
+                        className={`osm-tab${isActive ? ' active' : ''}`}
                       >
                         {cfg.icon} {cfg.label}
                         <span style={{
-                          background: isActive ? 'rgba(255,255,255,.25)' : 'var(--bg)',
+                          background: isActive ? 'rgba(255,255,255,.25)' : 'rgba(255,255,255,.08)',
                           borderRadius: 100,
                           padding: '1px 7px',
                           fontSize: '.72rem',
                           fontWeight: 800,
+                          marginLeft: 4
                         }}>{places[cat].length}</span>
                       </button>
                     )
                   })}
                   <button
                     onClick={loadNearby}
-                    style={{
-                      background: 'transparent',
-                      color: 'var(--muted)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 100,
-                      padding: '7px 14px',
-                      fontSize: '.78rem',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      marginLeft: 'auto',
-                    }}
+                    className="osm-tab"
+                    style={{ marginLeft: 'auto' }}
                   >↻ Refresh</button>
                 </div>
 
@@ -360,79 +341,72 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                     {tabIcon} No {CATEGORY_CONFIG[activeTab].label.toLowerCase()} found within 5km.
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     {currentPlaces.map((place, i) => (
-                      <div key={place.id} style={{
-                        background: 'var(--bg)',
-                        border: '1px solid var(--border)',
-                        borderRadius: 12,
-                        padding: '14px 16px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        gap: 12,
-                        transition: 'border-color .2s',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
-                          <div style={{
-                            width: 38, height: 38, borderRadius: 10,
-                            background: `${tabColor}20`,
-                            border: `1.5px solid ${tabColor}40`,
-                            display: 'grid', placeItems: 'center',
-                            fontSize: '.95rem', flexShrink: 0,
-                          }}>
-                            {i + 1}
-                          </div>
-                          <div style={{ minWidth: 0 }}>
-                            <div style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div key={place.id} className="osm-place-card">
+                        {/* Top row */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                            <div style={{
+                              width: 40, height: 40, borderRadius: 10,
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              display: 'grid', placeItems: 'center',
+                              fontSize: '1.1rem', flexShrink: 0,
+                            }}>
+                              {tabIcon}
+                            </div>
+                            <div style={{ fontWeight: 800, fontSize: '.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#fff' }}>
                               {place.name}
                             </div>
-                            <div style={{ fontSize: '.76rem', color: 'var(--muted)', display: 'flex', gap: 8, alignItems: 'center' }}>
-                              <span style={{ color: tabColor, fontWeight: 700 }}>📍 {formatDist(place.distance ?? 0)}</span>
-                              {place.phone && <span>· {place.phone}</span>}
-                            </div>
+                          </div>
+                          <span style={{
+                            background: 'rgba(34, 197, 94, 0.12)',
+                            border: '1.5px solid rgba(34, 197, 94, 0.25)',
+                            color: '#4ade80',
+                            padding: '3px 10px',
+                            borderRadius: 100,
+                            fontSize: '.72rem',
+                            fontWeight: 800,
+                            flexShrink: 0,
+                          }}>
+                            {formatDist(place.distance ?? 0)}
+                          </span>
+                        </div>
+
+                        {/* Mid Row (Status and info) */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 52 }}>
+                          <div style={{ fontSize: '.8rem', color: 'var(--muted)', display: 'flex', gap: 8, alignItems: 'center' }}>
+                            <span>📍 {formatDist(place.distance ?? 0)} away</span>
+                            {place.phone && <span>· {place.phone}</span>}
+                          </div>
+                          <div style={{ fontSize: '.78rem', color: '#4ade80', fontWeight: 600 }}>
+                            Emergency: Open 24/7
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: 7, flexShrink: 0 }}>
-                          {place.phone && (
+
+                        {/* Buttons row */}
+                        <div style={{ display: 'flex', gap: 10, width: '100%', marginTop: 4 }}>
+                          {place.phone ? (
                             <a
                               href={`tel:${place.phone.replace(/\s/g, '')}`}
-                              style={{
-                                background: '#22c55e',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: 8,
-                                padding: '7px 12px',
-                                fontSize: '.76rem',
-                                fontWeight: 700,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                                textDecoration: 'none',
-                              }}
+                              className="place-btn call"
                             >
                               📞 Call
                             </a>
+                          ) : (
+                            <button
+                              className="place-btn call disabled"
+                              disabled
+                            >
+                              📞 No Phone
+                            </button>
                           )}
                           <a
                             href={`https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lon}`}
                             target="_blank"
                             rel="noreferrer"
-                            style={{
-                              background: tabColor,
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: 8,
-                              padding: '7px 12px',
-                              fontSize: '.76rem',
-                              fontWeight: 700,
-                              cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 4,
-                              textDecoration: 'none',
-                            }}
+                            className="place-btn go"
                           >
                             🗺️ Go
                           </a>
@@ -488,18 +462,38 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
         </div>
       </div>
 
-      {/* ─── Fixed Bottom Action Bar ─── */}
+      {/* ─── Fixed Bottom App Nav Bar ─── */}
       <div className="profile-bottom-bar">
         <div className="profile-bottom-bar-inner">
-          {primaryContact && (
-            <a href={`tel:${primaryContact.phone.replace(/\s/g, '')}`} className="bottom-action primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.08 2.18 2 2 0 012.06 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-              Call {primaryContact.name}
+          <Link href="/" className="nav-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
+          </Link>
+          
+          {primaryContact ? (
+            <a href={`tel:${primaryContact.phone.replace(/\s/g, '')}`} className="nav-item critical">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.08 2.18 2 2 0 012.06 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <span>Call Contact</span>
+            </a>
+          ) : (
+            <a href="tel:911" className="nav-item critical">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.08 2.18 2 2 0 012.06 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <span>Call 911</span>
             </a>
           )}
-          <button onClick={handleShare} className="bottom-action secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Share
+          
+          <button onClick={() => {
+            document.getElementById('nearby-section')?.scrollIntoView({ behavior: 'smooth' });
+          }} className="nav-item active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>Nearby</span>
+          </button>
+          
+          <button onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }} className="nav-item">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profile</span>
           </button>
         </div>
       </div>

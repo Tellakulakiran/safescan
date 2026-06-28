@@ -1,18 +1,49 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --red:#e8302a;--red-b:#ff3b35;--red-dim:rgba(232,48,42,0.13);
-  --bg:#0a0a0a;--bg2:#111111;--bg3:#161616;--bg4:#1a1a1a;--bg5:#222222;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --text:#fff;--muted:#777;--muted2:#444;--green:#22c55e;
-  --glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
-  --glass-strong:rgba(255,255,255,0.07);
-  --yellow:#f59e0b;--blue:#3b82f6;
-  --card-radius:16px;
+  --accent:#00b4c8; /* cyan accent from screenshot */
+  --accent-b:#00d5ec;
+  --accent-dim:rgba(0,180,200,0.14);
+  --accent-glow:rgba(0,180,200,0.3);
+  
+  --red:#e8302a;
+  --red-b:#ff3b35;
+  --red-dim:rgba(232,48,42,0.13);
+  
+  --bg:#090e14; /* deep dark slate background */
+  --bg2:#0f1720;
+  --bg3:#131f2b;
+  --bg4:#182736;
+  --bg5:#1e3144;
+  
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.12);
+  --text:#fff;
+  --muted:#8fa0af; /* slate muted text */
+  --muted2:#4f6479;
+  --green:#22c55e;
+  --glass:rgba(15,23,32,0.52); /* frosted glass matching screenshot */
+  --glass-border:rgba(0,180,200,0.12);
+  --glass-strong:rgba(15,23,32,0.85);
+  --yellow:#f59e0b;
+  --blue:#3b82f6;
+  --card-radius:18px;
   --safe-bottom:env(safe-area-inset-bottom, 0px);
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(0, 180, 200, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(0, 180, 200, 0.04) 0%, transparent 40%),
+    linear-gradient(rgba(255,255,255,.01) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);
+  background-size:100% 100%, 100% 100%, 60px 60px, 60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
 
 /* ═══════════════════════════════════════
    ANIMATIONS
@@ -395,3 +426,160 @@ input[type="date"].ep-in{color-scheme:dark}
   .blood-mega .blood-value{font-size:2.4rem}
   .install-banner{bottom:12px;max-width:calc(100% - 24px)}
 }
+
+/* ═══════════════════════════════════════
+   CYAN THEME MOCKUP CLASSES
+   ═══════════════════════════════════════ */
+.osm-tab {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: all .25s ease;
+}
+.osm-tab:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.osm-tab.active {
+  background: linear-gradient(135deg, var(--accent), #0098a6);
+  color: white !important;
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+.osm-tab span {
+  background: rgba(255,255,255,0.18) !important;
+  color: #fff !important;
+}
+
+.osm-place-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all .3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.osm-place-card:hover {
+  border-color: rgba(0, 180, 200, 0.35);
+  box-shadow: 0 8px 28px rgba(0, 180, 200, 0.12), inset 0 1px 0 rgba(255,255,255,0.04);
+  transform: translateY(-2px);
+}
+
+.place-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 100px;
+  padding: 11px 18px;
+  font-size: .84rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all .2s ease;
+  font-family: inherit;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.place-btn.call {
+  border: 1.5px solid rgba(34, 197, 94, 0.4);
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.04);
+}
+.place-btn.call:hover {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: #22c55e;
+}
+.place-btn.call.disabled {
+  border-color: rgba(255, 255, 255, 0.05);
+  color: var(--muted2);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: not-allowed;
+}
+.place-btn.go {
+  border: 1.5px solid rgba(59, 130, 246, 0.4);
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.04);
+}
+.place-btn.go:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+.profile-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 150;
+  background: rgba(9, 14, 19, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 16px calc(12px + var(--safe-bottom));
+}
+.profile-bottom-bar-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-around;
+  align-items: center;
+  gap: 8px;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 4px 12px;
+}
+.nav-item svg {
+  transition: transform 0.2s ease;
+  stroke: currentColor;
+}
+.nav-item:hover {
+  color: var(--text);
+}
+.nav-item:hover svg {
+  transform: translateY(-1px);
+}
+.nav-item.critical {
+  color: var(--red);
+}
+.nav-item.critical:hover {
+  color: var(--red-b);
+}
+.nav-item.active {
+  color: var(--accent);
+}
+.nav-item.active svg {
+  stroke: var(--accent);
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
