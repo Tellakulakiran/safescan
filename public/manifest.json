@@ -46,6 +46,22 @@
       "purpose": "any"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "SafeScan Emergency Profile & Nearby Hospital Locator"
+    },
+    {
+      "src": "/screenshots/wide.png",
+      "sizes": "1024x500",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "SafeScan Emergency Pass & Medical ID"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Create Profile",
