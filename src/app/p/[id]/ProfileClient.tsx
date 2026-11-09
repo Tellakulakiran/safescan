@@ -59,29 +59,33 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
   }, [])
 
   async function fetchCategory(cat: Category, lat: number, lon: number): Promise<NearbyPlace[]> {
-    const amenity = CATEGORY_CONFIG[cat].amenity
-    const url     = `/api/nearby?lat=${lat}&lon=${lon}&amenity=${amenity}`
-    const res     = await fetch(url)
-    if (!res.ok) {
-      throw new Error(`Failed to load: ${res.statusText}`)
+    try {
+      const amenity = CATEGORY_CONFIG[cat].amenity
+      const url     = `/api/nearby?lat=${lat}&lon=${lon}&amenity=${amenity}`
+      const res     = await fetch(url)
+      if (!res.ok) {
+        return []
+      }
+      const data    = await res.json()
+      return (data.elements || [])
+        .map((el: any) => {
+          const itemLat = el.lat ?? el.center?.lat
+          const itemLon = el.lon ?? el.center?.lon
+          return {
+            id:       el.id,
+            name:     el.tags?.name || el.tags?.['name:en'] || (amenity === 'hospital' ? 'Hospital' : amenity === 'pharmacy' ? 'Medical Store' : 'Police Station'),
+            lat:      itemLat,
+            lon:      itemLon,
+            phone:    el.tags?.phone || el.tags?.['contact:phone'] || null,
+            distance: haversineDistance(lat, lon, itemLat, itemLon),
+          }
+        })
+        .filter((place: NearbyPlace) => place.lat !== undefined && place.lon !== undefined)
+        .sort((a: NearbyPlace, b: NearbyPlace) => (a.distance ?? 0) - (b.distance ?? 0))
+        .slice(0, 6)
+    } catch {
+      return []
     }
-    const data    = await res.json()
-    return (data.elements || [])
-      .map((el: any) => {
-        const itemLat = el.lat ?? el.center?.lat
-        const itemLon = el.lon ?? el.center?.lon
-        return {
-          id:       el.id,
-          name:     el.tags?.name || el.tags?.['name:en'] || (amenity === 'hospital' ? 'Hospital' : amenity === 'pharmacy' ? 'Medical Store' : 'Police Station'),
-          lat:      itemLat,
-          lon:      itemLon,
-          phone:    el.tags?.phone || el.tags?.['contact:phone'] || null,
-          distance: haversineDistance(lat, lon, itemLat, itemLon),
-        }
-      })
-      .filter((place: NearbyPlace) => place.lat !== undefined && place.lon !== undefined)
-      .sort((a: NearbyPlace, b: NearbyPlace) => (a.distance ?? 0) - (b.distance ?? 0))
-      .slice(0, 6)
   }
 
   async function loadNearby() {
@@ -101,11 +105,15 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
         const lon = pos.coords.longitude
         setCoords({ lat, lon })
         try {
-          const [hosp, pharm, pol] = await Promise.all([
+          const [hospRes, pharmRes, polRes] = await Promise.allSettled([
             fetchCategory('hospitals',  lat, lon),
             fetchCategory('pharmacies', lat, lon),
             fetchCategory('police',     lat, lon),
           ])
+          const hosp = hospRes.status === 'fulfilled' ? hospRes.value : []
+          const pharm = pharmRes.status === 'fulfilled' ? pharmRes.value : []
+          const pol = polRes.status === 'fulfilled' ? polRes.value : []
+
           setPlaces({ hospitals: hosp, pharmacies: pharm, police: pol })
           setFetched(true)
         } catch {
@@ -334,11 +342,22 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                 {currentPlaces.length === 0 ? (
                   <div style={{
                     textAlign: 'center',
-                    padding: '28px 0',
+                    padding: '28px 16px',
                     color: 'var(--muted)',
                     fontSize: '.86rem',
                   }}>
-                    {tabIcon} No {CATEGORY_CONFIG[activeTab].label.toLowerCase()} found within 5km.
+                    <p style={{ marginBottom: 12 }}>{tabIcon} No {CATEGORY_CONFIG[activeTab].label.toLowerCase()} found nearby in OpenStreetMap.</p>
+                    {coords && (
+                      <a
+                        href={`https://www.google.com/maps/search/${encodeURIComponent(CATEGORY_CONFIG[activeTab].label)}/@${coords.lat},${coords.lon},14z`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-red"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '.84rem', padding: '10px 20px', background: 'var(--accent)', color: '#000', fontWeight: 800 }}
+                      >
+                        🗺️ Find {CATEGORY_CONFIG[activeTab].label} on Google Maps
+                      </a>
+                    )}
                   </div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -413,6 +432,18 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                         </div>
                       </div>
                     ))}
+                    {coords && (
+                      <div style={{ textAlign: 'center', marginTop: 6 }}>
+                        <a
+                          href={`https://www.google.com/maps/search/${encodeURIComponent(CATEGORY_CONFIG[activeTab].label)}/@${coords.lat},${coords.lon},14z`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ fontSize: '.78rem', color: 'var(--accent)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        >
+                          🗺️ View more {CATEGORY_CONFIG[activeTab].label.toLowerCase()} on Google Maps →
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
 

@@ -110,13 +110,12 @@ export default function HomePage() {
             </div>
           </div>
           <div className="pdemo">
-            <div className="pdh"><div className="pdav">JD</div><div className="pdi"><h5>John Doe</h5><span>⚠ Emergency Profile</span></div></div>
+            <div className="pdh"><div className="pdav">K</div><div className="pdi"><h5>kiran</h5><span>⚠ Emergency Profile</span></div></div>
             <div className="pdfs">
-              <div className="pdf"><div className="lbl">Blood Type</div><div className="val vred">A+</div></div>
-              <div className="pdf"><div className="lbl">Age</div><div className="val">28</div></div>
-              <div className="pdf"><div className="lbl">Allergies</div><div className="val vred">Penicillin</div></div>
-              <div className="pdf"><div className="lbl">Condition</div><div className="val">Diabetic</div></div>
-              <div className="pdf full"><div className="lbl">Emergency Contact</div><div className="val" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><span>Sarah Doe</span><span style={{background:'var(--red)',color:'white',padding:'3px 12px',borderRadius:100,fontSize:'.7rem'}}>📞 Call</span></div></div>
+              <div className="pdf"><div className="lbl">Blood Type</div><div className="val vred">B+</div></div>
+              <div className="pdf"><div className="lbl">Age</div><div className="val">23</div></div>
+              <div className="pdf full"><div className="lbl">Allergies</div><div className="val vred">Penicillin</div></div>
+              <div className="pdf full"><div className="lbl">Emergency Contact</div><div className="val" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><span>ram</span><span style={{background:'var(--red)',color:'white',padding:'3px 12px',borderRadius:100,fontSize:'.7rem'}}>📞 Call</span></div></div>
             </div>
           </div>
         </div>
