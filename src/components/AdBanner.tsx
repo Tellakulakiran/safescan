@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 
 interface AdBannerProps {
   slot?: string
@@ -47,16 +46,9 @@ export default function AdBanner({ slot = 'emergency-banner', format = 'banner' 
         }}>
           Sponsored
         </span>
-        <Link href="/pro" style={{
-          color: 'var(--accent)',
-          textDecoration: 'none',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-        }}>
-          👑 Remove Ads with PRO
-        </Link>
+        <span style={{ fontSize: '.7rem', color: 'var(--muted)' }}>
+          Health & Safety Partner
+        </span>
       </div>
 
       {/* Ad Content / Fallback Sponsored Health Partner */}
