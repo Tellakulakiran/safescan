@@ -1,13 +1,18 @@
 {
+  "id": "/?source=pwa",
   "name": "SafeScan — Emergency Medical Profile",
   "short_name": "SafeScan",
   "description": "Your silent guardian in emergencies. Instant access to medical profiles via QR.",
   "start_url": "/",
   "scope": "/",
+  "dir": "ltr",
+  "lang": "en",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#090e17",
   "theme_color": "#00b4c8",
+  "prefer_related_applications": false,
   "categories": ["medical", "health", "emergency"],
   "icons": [
     {
