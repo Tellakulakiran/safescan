@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import AdBanner from '@/components/AdBanner'
 
 export default function HomePage() {
   return (
@@ -12,6 +13,7 @@ export default function HomePage() {
           <li className="hide-sm"><a href="#process">The Process</a></li>
           <li className="hide-sm"><a href="#features">Features</a></li>
           <li className="hide-sm"><a href="#howitworks">How It Works</a></li>
+          <li><Link href="/pro" style={{color:'#f59e0b',fontWeight:800,display:'flex',alignItems:'center',gap:4}}>👑 PRO</Link></li>
           <li><Link href="/create" className="nav-cta">Create Profile</Link></li>
         </ul>
       </nav>
@@ -121,6 +123,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SAFESCAN PRO HIGHLIGHT */}
+      <section className="hsec" style={{textAlign:'center',padding:'40px 20px 20px'}}>
+        <div style={{maxWidth:680,margin:'0 auto',background:'linear-gradient(145deg, rgba(15,23,42,0.95), rgba(6,11,19,0.98))',border:'2px solid rgba(245,158,11,0.4)',borderRadius:24,padding:'36px 28px',boxShadow:'0 20px 45px rgba(245,158,11,0.12)'}}>
+          <span style={{fontSize:'.75rem',fontWeight:900,color:'#f59e0b',textTransform:'uppercase',letterSpacing:'1.5px'}}>👑 Premium Security</span>
+          <h2 style={{fontSize:'1.8rem',fontWeight:900,color:'#fff',marginTop:6,marginBottom:12}}>SafeScan <span style={{color:'#f59e0b'}}>PRO</span></h2>
+          <p style={{color:'var(--muted)',fontSize:'.92rem',lineHeight:1.6,marginBottom:22}}>
+            Get automated <strong>WhatsApp & SMS alerts with the scanner&apos;s live GPS location</strong> the moment someone scans your QR code, plus protect your entire family with 5 profiles.
+          </p>
+          <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+            <Link href="/pro" className="btn-red" style={{background:'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',color:'#000',fontWeight:900,padding:'12px 28px'}}>
+              Explore SafeScan PRO Plans (From ₹49/mo) →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Ad Placement */}
+      <div style={{padding:'0 20px'}}>
+        <AdBanner slot="home-footer" />
+      </div>
+
       {/* CTA */}
       <section className="ctasec">
         <h2>Don&apos;t Wait for an<br /><span className="red">Emergency</span></h2>
@@ -133,7 +156,7 @@ export default function HomePage() {
 
       <footer className="sfooter">
         <Link href="/" className="flogo"><div className="logo-icon">🛡</div>SafeScan</Link>
-        <p>© {new Date().getFullYear()} SafeScan. Your data is safe. • <Link href="/privacy" style={{color:'var(--accent)',textDecoration:'none'}}>Privacy Policy</Link></p>
+        <p>© {new Date().getFullYear()} SafeScan. Your data is safe. • <Link href="/pro" style={{color:'#f59e0b',textDecoration:'none',fontWeight:700}}>👑 SafeScan PRO</Link> • <Link href="/privacy" style={{color:'var(--accent)',textDecoration:'none'}}>Privacy Policy</Link></p>
         <p>Made with ❤ for emergency preparedness</p>
       </footer>
     </>

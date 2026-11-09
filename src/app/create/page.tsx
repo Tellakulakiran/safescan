@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
+import AdBanner from '@/components/AdBanner'
 
 interface Contact { name: string; phone: string; rel: string }
 
@@ -471,6 +472,7 @@ export default function CreatePage() {
       <nav className="top-nav">
         <Link href="/" className="nav-logo"><div className="logo-icon">🛡</div>SafeScan</Link>
         <ul className="nav-links">
+          <li><Link href="/pro" style={{color:'#f59e0b',fontWeight:800,display:'flex',alignItems:'center',gap:4}}>👑 PRO</Link></li>
           <li><Link href="/create" className="nav-cta">Create Profile</Link></li>
         </ul>
       </nav>
@@ -655,6 +657,33 @@ export default function CreatePage() {
                   <li>First responders can read your emergency details & ICE contact immediately, or scan for complete history without unlocking your phone!</li>
                 </ol>
               </div>
+
+              {/* SafeScan PRO Upsell Card */}
+              <div style={{
+                background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(6, 11, 19, 0.98))',
+                border: '1.5px solid rgba(245, 158, 11, 0.4)',
+                borderRadius: 16,
+                padding: '18px 20px',
+                textAlign: 'left',
+                marginBottom: 16,
+              }}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                  <span style={{fontSize:'.75rem',fontWeight:900,color:'#f59e0b',letterSpacing:'1px',textTransform:'uppercase'}}>👑 SafeScan PRO Feature</span>
+                  <span style={{fontSize:'.75rem',color:'#f59e0b',fontWeight:800}}>From ₹49/mo</span>
+                </div>
+                <div style={{fontSize:'.92rem',fontWeight:800,color:'#fff',marginBottom:6}}>
+                  Want Instant WhatsApp / SMS Alerts When Scanned?
+                </div>
+                <p style={{fontSize:'.78rem',color:'var(--muted)',lineHeight:1.6,marginBottom:12}}>
+                  With SafeScan PRO, whenever someone scans your QR code, your emergency contacts instantly receive an alert with the scanner&apos;s live Google Maps location.
+                </p>
+                <Link href="/pro" className="btn-red" style={{width:'100%',justifyContent:'center',background:'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',color:'#000',fontWeight:900,padding:'10px 18px',fontSize:'.82rem'}}>
+                  Upgrade to PRO & Enable Live GPS Alerts →
+                </Link>
+              </div>
+
+              {/* Sponsored Ad Banner */}
+              <AdBanner slot="create-success" format="card" />
 
               <button className="btn-ghost" onClick={resetForm} style={{width:'100%',justifyContent:'center'}}>＋ Create Another Profile</button>
             </div>
