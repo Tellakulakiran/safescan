@@ -90,7 +90,7 @@ export default function HomePage() {
             <div className="fcard"><span className="fico">🔗</span><h4>Real URL per Profile</h4><p>Every profile gets a unique public URL. Scanning the QR opens a full, beautifully designed page — on any device.</p></div>
             <div className="fcard"><span className="fico">📵</span><h4>Works Offline Too</h4><p>No internet? The QR still shows your full emergency info as plain readable text. Nothing is hidden.</p></div>
             <div className="fcard"><span className="fico">👤</span><h4>No Account Needed</h4><p>Set up in 60 seconds. No email, no password, no sign-up — just fill and generate your QR.</p></div>
-            <div className="fcard"><span className="fico">📲</span><h4>Install as App</h4><p>Add SafeScan to your home screen. It works like a native app — with offline support, instant loading, and no app store needed.</p></div>
+            <div className="fcard"><span className="fico">📲</span><h4>Instant App & Web Sync</h4><p>Works seamlessly as an app or web link. First responders can access vital info in seconds on any device.</p></div>
             <div className="fcard"><span className="fico">💊</span><h4>Full Medical Profile</h4><p>Blood type, allergies, medications, conditions, and emergency contacts — everything in one scan.</p></div>
             <div className="fcard"><span className="fico">📞</span><h4>One-Tap Call Buttons</h4><p>Emergency contacts appear with instant call buttons. Tapping calls directly from the page.</p></div>
           </div>
@@ -119,30 +119,6 @@ export default function HomePage() {
               <div className="pdf full"><div className="lbl">Emergency Contact</div><div className="val" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><span>Sarah Doe</span><span style={{background:'var(--red)',color:'white',padding:'3px 12px',borderRadius:100,fontSize:'.7rem'}}>📞 Call</span></div></div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* INSTALL APP CTA */}
-      <section className="hsec alt" id="install" style={{textAlign:'center'}}>
-        <div style={{maxWidth:600,margin:'0 auto'}}>
-          <div className="eyebrow">Install the App</div>
-          <h2 className="stitle">Always <span className="red">One Tap</span> Away</h2>
-          <p className="sdesc">Install SafeScan on your phone like a real app. No app store, no downloads — just instant access from your home screen.</p>
-          <div style={{display:'flex',gap:18,justifyContent:'center',flexWrap:'wrap',marginBottom:32}}>
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:14,padding:'22px 24px',flex:'1 1 200px',maxWidth:260,textAlign:'center'}}>
-              <div style={{fontSize:'2rem',marginBottom:10}}>🤖</div>
-              <h4 style={{fontSize:'.92rem',fontWeight:700,marginBottom:6}}>Android</h4>
-              <p style={{fontSize:'.78rem',color:'var(--muted)',lineHeight:1.6}}>Tap the &quot;Install&quot; banner or use browser menu → &quot;Add to Home Screen&quot;</p>
-            </div>
-            <div style={{background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:14,padding:'22px 24px',flex:'1 1 200px',maxWidth:260,textAlign:'center'}}>
-              <div style={{fontSize:'2rem',marginBottom:10}}>🍎</div>
-              <h4 style={{fontSize:'.92rem',fontWeight:700,marginBottom:6}}>iPhone / iPad</h4>
-              <p style={{fontSize:'.78rem',color:'var(--muted)',lineHeight:1.6}}>Open in Safari → Tap share icon → &quot;Add to Home Screen&quot;</p>
-            </div>
-          </div>
-          <p style={{fontSize:'.82rem',color:'var(--muted2)',lineHeight:1.6}}>
-            Once installed, SafeScan opens instantly — no browser bar, full-screen experience, works offline.
-          </p>
         </div>
       </section>
 

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import InstallBanner from './InstallBanner'
 
 export const metadata: Metadata = {
   title: 'SafeScan — Your Silent Guardian',
@@ -38,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}} />
       </head>
       <body>
-        <InstallBanner />
         {children}
       </body>
     </html>
