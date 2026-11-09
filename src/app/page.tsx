@@ -134,7 +134,7 @@ export default function HomePage() {
 
       <footer className="sfooter">
         <Link href="/" className="flogo"><div className="logo-icon">🛡</div>SafeScan</Link>
-        <p>© {new Date().getFullYear()} SafeScan. Your data is safe.</p>
+        <p>© {new Date().getFullYear()} SafeScan. Your data is safe. • <Link href="/privacy" style={{color:'var(--accent)',textDecoration:'none'}}>Privacy Policy</Link></p>
         <p>Made with ❤ for emergency preparedness</p>
       </footer>
     </>
