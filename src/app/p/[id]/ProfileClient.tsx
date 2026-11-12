@@ -71,18 +71,26 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
         .map((el: any) => {
           const itemLat = el.lat ?? el.center?.lat
           const itemLon = el.lon ?? el.center?.lon
+          const dist = typeof el.distance === 'number' && el.distance > 0
+            ? el.distance
+            : haversineDistance(lat, lon, itemLat, itemLon)
+
+          const cleanName = el.name || el.tags?.name || el.tags?.['name:en'] || (amenity === 'hospital' ? 'Emergency Hospital' : amenity === 'pharmacy' ? 'Medical Store' : 'Police Station')
+          const defaultPhone = amenity === 'hospital' ? '108' : amenity === 'police' ? '100' : '108'
+          const phone = el.phone || el.tags?.phone || el.tags?.['contact:phone'] || defaultPhone
+
           return {
             id:       el.id,
-            name:     el.tags?.name || el.tags?.['name:en'] || (amenity === 'hospital' ? 'Hospital' : amenity === 'pharmacy' ? 'Medical Store' : 'Police Station'),
+            name:     cleanName,
             lat:      itemLat,
             lon:      itemLon,
-            phone:    el.tags?.phone || el.tags?.['contact:phone'] || null,
-            distance: haversineDistance(lat, lon, itemLat, itemLon),
+            phone,
+            distance: dist,
           }
         })
-        .filter((place: NearbyPlace) => place.lat !== undefined && place.lon !== undefined)
+        .filter((place: NearbyPlace) => place.lat !== undefined && place.lon !== undefined && (place.distance ?? 0) <= 25000)
         .sort((a: NearbyPlace, b: NearbyPlace) => (a.distance ?? 0) - (b.distance ?? 0))
-        .slice(0, 6)
+        .slice(0, 8)
     } catch {
       return []
     }
@@ -99,40 +107,51 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
       return
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude
-        const lon = pos.coords.longitude
-        setCoords({ lat, lon })
-        try {
-          const [hospRes, pharmRes, polRes] = await Promise.allSettled([
-            fetchCategory('hospitals',  lat, lon),
-            fetchCategory('pharmacies', lat, lon),
-            fetchCategory('police',     lat, lon),
-          ])
-          const hosp = hospRes.status === 'fulfilled' ? hospRes.value : []
-          const pharm = pharmRes.status === 'fulfilled' ? pharmRes.value : []
-          const pol = polRes.status === 'fulfilled' ? polRes.value : []
+    const runFetch = async (lat: number, lon: number) => {
+      setCoords({ lat, lon })
+      try {
+        const [hospRes, pharmRes, polRes] = await Promise.allSettled([
+          fetchCategory('hospitals',  lat, lon),
+          fetchCategory('pharmacies', lat, lon),
+          fetchCategory('police',     lat, lon),
+        ])
+        const hosp = hospRes.status === 'fulfilled' ? hospRes.value : []
+        const pharm = pharmRes.status === 'fulfilled' ? pharmRes.value : []
+        const pol = polRes.status === 'fulfilled' ? polRes.value : []
 
-          setPlaces({ hospitals: hosp, pharmacies: pharm, police: pol })
-          setFetched(true)
-        } catch {
-          setGeoError('Could not load nearby places. Check internet connection.')
-        }
-        setLoading(false)
-      },
-      (err) => {
-        if (err.code === 1) {
-          setGeoError('Location access denied. Please allow location to find nearby services.')
-        } else if (err.code === 3) {
-          setGeoError('Location request timed out. Please try again.')
-        } else {
-          setGeoError('Could not obtain your location. Make sure GPS is enabled.')
-        }
-        setLoading(false)
-      },
-      { enableHighAccuracy: false, timeout: 12000 }
-    )
+        setPlaces({ hospitals: hosp, pharmacies: pharm, police: pol })
+        setFetched(true)
+      } catch {
+        setGeoError('Could not load nearby places. Check internet connection.')
+      }
+      setLoading(false)
+    }
+
+    const tryGetPosition = (highAccuracy: boolean) => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          runFetch(pos.coords.latitude, pos.coords.longitude)
+        },
+        (err) => {
+          if (highAccuracy && (err.code === 2 || err.code === 3)) {
+            // If GPS sensor timed out or unavailable, retry with low accuracy
+            tryGetPosition(false)
+            return
+          }
+          if (err.code === 1) {
+            setGeoError('Location permission denied. Please allow location in your browser settings to find nearby services.')
+          } else if (err.code === 3) {
+            setGeoError('GPS location request timed out. Please try again.')
+          } else {
+            setGeoError('Could not obtain your location. Make sure GPS is turned on.')
+          }
+          setLoading(false)
+        },
+        { enableHighAccuracy: highAccuracy, timeout: highAccuracy ? 8000 : 12000, maximumAge: 30000 }
+      )
+    }
+
+    tryGetPosition(true)
   }
 
   function handleShare() {
@@ -389,14 +408,14 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                             fontWeight: 800,
                             flexShrink: 0,
                           }}>
-                            {formatDist(place.distance ?? 0)}
+                            {place.distance === 0 ? '24/7 Hotline' : formatDist(place.distance ?? 0)}
                           </span>
                         </div>
 
                         {/* Mid Row (Status and info) */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingLeft: 52 }}>
                           <div style={{ fontSize: '.8rem', color: 'var(--muted)', display: 'flex', gap: 8, alignItems: 'center' }}>
-                            <span>📍 {formatDist(place.distance ?? 0)} away</span>
+                            <span>📍 {place.distance === 0 ? 'Central Emergency Dispatch' : `${formatDist(place.distance ?? 0)} away`}</span>
                             {place.phone && <span>· {place.phone}</span>}
                           </div>
                           <div style={{ fontSize: '.78rem', color: '#4ade80', fontWeight: 600 }}>
@@ -408,18 +427,18 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                         <div style={{ display: 'flex', gap: 10, width: '100%', marginTop: 4 }}>
                           {place.phone ? (
                             <a
-                              href={`tel:${place.phone.replace(/\s/g, '')}`}
+                              href={`tel:${place.phone.replace(/[^0-9+]/g, '')}`}
                               className="place-btn call"
                             >
-                              📞 Call
+                              📞 Call {place.phone.length <= 4 ? place.phone : ''}
                             </a>
                           ) : (
-                            <button
-                              className="place-btn call disabled"
-                              disabled
+                            <a
+                              href={`tel:${activeTab === 'hospitals' ? '108' : activeTab === 'police' ? '100' : '108'}`}
+                              className="place-btn call"
                             >
-                              📞 No Phone
-                            </button>
+                              📞 Emergency {activeTab === 'police' ? '100' : '108'}
+                            </a>
                           )}
                           <a
                             href={`https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lon}`}
@@ -435,7 +454,7 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
                     {coords && (
                       <div style={{ textAlign: 'center', marginTop: 6 }}>
                         <a
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(CATEGORY_CONFIG[activeTab].label)}/@${coords.lat},${coords.lon},14z`}
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CATEGORY_CONFIG[activeTab].label + ' near me')}`}
                           target="_blank"
                           rel="noreferrer"
                           style={{ fontSize: '.78rem', color: 'var(--accent)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
