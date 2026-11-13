@@ -5,6 +5,7 @@
       "namespace": "android_app",
       "package_name": "com.safescan.medicalid",
       "sha256_cert_fingerprints": [
+        "D5:64:D8:1B:02:A6:09:EA:1B:59:BB:02:21:06:E1:97:75:D3:97:D4:E0:C3:D0:80:F9:45:A6:37:9D:2D:49:BB",
         "A1:B3:19:CD:EF:1E:1B:5A:6B:BF:92:C6:E3:04:7B:0A:0B:09:48:F2:3F:86:A0:E3:28:F8:C2:69:6C:07:3A:44",
         "17:02:D2:BF:10:5E:A8:C6:DD:8C:D5:9B:9B:89:72:38:7C:C5:DB:39:F0:8C:3D:A4:A2:C4:C8:1B:CF:B5:63:23"
       ]
