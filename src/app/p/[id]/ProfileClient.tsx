@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import BottomNav from '@/components/BottomNav'
 
 interface Contact { name: string; phone: string; rel?: string }
 interface Profile {
@@ -224,6 +225,35 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
             <div className="em-av">{initials}</div>
             <div className="em-name">{profile.name}</div>
             <div className="em-sub">{subParts.join(' · ')}</div>
+          </div>
+
+          {/* Quick Actions (Save as Primary + Share) */}
+          <div style={{ display: 'flex', gap: 8, margin: '14px 0 18px', width: '100%' }}>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.setItem('safescan_my_id', profile.id)
+                  localStorage.setItem('safescan_my_name', profile.name)
+                  localStorage.setItem('safescan_my_blood', profile.bloodType || 'Unknown')
+                  localStorage.setItem('safescan_my_allergies', JSON.stringify(profile.allergies || []))
+                  setShareToast('⭐ Saved as your primary ID on this device!')
+                  setTimeout(() => setShareToast(null), 3000)
+                } catch {}
+              }}
+              className="btn-ghost"
+              style={{ flex: 1, padding: '10px 14px', fontSize: '.82rem', borderColor: 'var(--accent)', color: 'var(--accent)' }}
+            >
+              ⭐ Set as My Primary ID
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowShare(true)}
+              className="btn-ghost"
+              style={{ padding: '10px 16px', fontSize: '.82rem' }}
+            >
+              📤 Share
+            </button>
           </div>
 
           {/* ─── Blood Type Mega Badge ─── */}
@@ -568,6 +598,9 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
           </div>
         </div>
       </div>
+
+      {/* Native Bottom Navigation */}
+      <BottomNav />
 
       {/* Share toast */}
       {shareToast && <div className="toast show ok">{shareToast}</div>}

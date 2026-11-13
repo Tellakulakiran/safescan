@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import AdBanner from '@/components/AdBanner'
+import BottomNav from '@/components/BottomNav'
 
 interface Contact { name: string; phone: string; rel: string }
 
@@ -427,6 +428,15 @@ export default function CreatePage() {
         conditions,
         organDonor: organ,
       })
+      try {
+        localStorage.setItem('safescan_my_id', data.id)
+        localStorage.setItem('safescan_my_name', name)
+        localStorage.setItem('safescan_my_blood', blood || 'Unknown')
+        localStorage.setItem('safescan_my_allergies', JSON.stringify(allergies))
+        localStorage.setItem('safescan_my_contacts', JSON.stringify(contacts))
+      } catch (err) {
+        console.warn('Could not save to localStorage', err)
+      }
       showToast('✅ Emergency Profile & Card Ready!', 'ok')
     } catch {
       showToast('Network error. Try again.', 'err')
@@ -690,6 +700,9 @@ export default function CreatePage() {
           </div>
         </div>
       </div>
+
+      {/* Native Bottom Navigation */}
+      <BottomNav />
 
       {/* Toast */}
       {toast && <div className={`toast show ${toast.type}`}>{toast.msg}</div>}
