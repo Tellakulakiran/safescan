@@ -75,12 +75,23 @@ export default function PrivacyPage() {
             </section>
 
             <section style={{ marginBottom: 28 }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', marginBottom: 12 }}>6. Contact & Support</h2>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', marginBottom: 12 }}>6. Data Deletion & Retention</h2>
               <p>
-                If you have questions about this Privacy Policy or wish to have your emergency profile removed, please contact us at:
+                You have full control over your emergency profile data. If you wish to delete your emergency medical profile or request removal of your data at any time, please email us directly with your profile name or link at:
               </p>
-              <p style={{ marginTop: 6, fontWeight: 700, color: 'var(--accent)' }}>
-                support@safescan.app
+              <p style={{ marginTop: 8, fontWeight: 700, color: 'var(--accent)' }}>
+                tellakulakiran@gmail.com
+              </p>
+              <p style={{ marginTop: 8, fontSize: '.88rem', color: 'var(--muted)' }}>
+                Upon receipt of your request, your profile record and associated QR data will be permanently deleted from our servers within 48 hours.
+              </p>
+            </section>
+
+            <section style={{ marginBottom: 28 }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', marginBottom: 12 }}>7. Contact & Developer Details</h2>
+              <p>
+                Developer: Tellakula Durga Sai Kiran (SafeScan)<br />
+                Email: tellakulakiran@gmail.com
               </p>
             </section>
 
