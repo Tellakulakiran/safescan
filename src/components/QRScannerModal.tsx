@@ -79,7 +79,12 @@ export default function QRScannerModal({ isOpen, onClose }: QRScannerModalProps)
     // Check if it's a URL like https://.../p/UUID
     const match = rawText.match(/\/p\/([a-zA-Z0-9_-]+)/)
     if (match && match[1]) {
-      router.push(`/p/${match[1]}`)
+      let search = ''
+      try {
+        const u = new URL(rawText, window.location.origin)
+        search = u.search
+      } catch {}
+      router.push(`/p/${match[1]}${search}`)
       onClose()
       return
     }

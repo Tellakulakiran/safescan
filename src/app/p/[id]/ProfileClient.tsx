@@ -39,7 +39,8 @@ const CATEGORY_CONFIG: Record<Category, { label: string; icon: string; amenity: 
   police:     { label: 'Police',         icon: '🚨', amenity: 'police',    color: '#3b82f6' },
 }
 
-export default function ProfileClient({ profile }: { profile: Profile }) {
+export default function ProfileClient({ profile: initialProfile }: { profile: Profile }) {
+  const [profile, setProfile]           = useState<Profile>(initialProfile)
   const [isOnline, setIsOnline]         = useState(true)
   const [coords, setCoords]             = useState<{ lat: number; lon: number } | null>(null)
   const [geoError, setGeoError]         = useState<string | null>(null)
@@ -56,8 +57,36 @@ export default function ProfileClient({ profile }: { profile: Profile }) {
     const off = () => setIsOnline(false)
     window.addEventListener('online',  on)
     window.addEventListener('offline', off)
+
+    // Check offline payload in URL query params (?n=...&b=...&c=...)
+    if (typeof window !== 'undefined') {
+      try {
+        const sp = new URLSearchParams(window.location.search)
+        const qName = sp.get('n')
+        const qBlood = sp.get('b')
+        const qAllergies = sp.get('a')
+        const qContacts = sp.get('c')
+
+        if (qName || qBlood || qContacts) {
+          setProfile(prev => {
+            const next = { ...prev }
+            if (qName) next.name = qName
+            if (qBlood) next.bloodType = qBlood
+            if (qAllergies) next.allergies = qAllergies.split(',')
+            if (qContacts) {
+              next.contacts = qContacts.split(';').map(item => {
+                const parts = item.split(':')
+                return { name: parts[0] || '', phone: parts[1] || '', rel: parts[2] || 'Emergency Contact' }
+              })
+            }
+            return next
+          })
+        }
+      } catch {}
+    }
+
     return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off) }
-  }, [])
+  }, [initialProfile])
 
   async function fetchCategory(cat: Category, lat: number, lon: number): Promise<NearbyPlace[]> {
     try {

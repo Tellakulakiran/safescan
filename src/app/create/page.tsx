@@ -335,7 +335,9 @@ function generateStyledCard(
 export default function CreatePage() {
   const [allergies,   setAllergies]   = useState<string[]>([])
   const [meds,        setMeds]        = useState<string[]>([])
-  const [contacts,    setContacts]    = useState<Contact[]>([])
+  const [contacts,    setContacts]    = useState<Contact[]>([
+    { name: 'ram', phone: '', rel: 'father' }
+  ])
   const [showCM,      setShowCM]      = useState(false)
   const [cmName,      setCmName]      = useState('')
   const [cmPhone,     setCmPhone]     = useState('')
@@ -397,12 +399,21 @@ export default function CreatePage() {
       const data = await res.json()
       if (!res.ok) { showToast(data.error || 'Failed to save', 'err'); setLoading(false); return }
 
-      // Generate high-resolution QR pointing to the live profile URL
+      // Generate high-resolution QR pointing to the live profile URL with offline emergency payload
+      const offlineParams = new URLSearchParams()
+      if (name) offlineParams.set('n', name)
+      if (blood) offlineParams.set('b', blood)
+      if (allergies && allergies.length > 0) offlineParams.set('a', allergies.slice(0, 3).join(','))
+      if (contacts && contacts.length > 0) {
+        offlineParams.set('c', contacts.map((c: any) => `${c.name}:${c.phone}:${c.rel || ''}`).join(';'))
+      }
       const profileUrl = `${window.location.origin}/p/${data.id}`
-      const qrImg = await QRCode.toDataURL(profileUrl, {
+      const fullQrUrl = `${profileUrl}?${offlineParams.toString()}`
+
+      const qrImg = await QRCode.toDataURL(fullQrUrl, {
         width: 500, margin: 2,
         color: { dark: '#000000', light: '#ffffff' },
-        errorCorrectionLevel: 'H',
+        errorCorrectionLevel: 'M',
       })
 
       // Generate the attractive high-resolution emergency ID card
@@ -499,10 +510,10 @@ export default function CreatePage() {
               {/* Basic Info */}
               <div className="ep-card">
                 <div className="ep-card-hd"><span style={{color:'var(--red)'}}>👤</span> Basic Information</div>
-                <div className="ep-field"><label className="ep-lbl">Full Name *</label><input className="ep-in" type="text" id="ep-name" placeholder="Your full name" /></div>
+                <div className="ep-field"><label className="ep-lbl">Full Name *</label><input className="ep-in" type="text" id="ep-name" placeholder="Your full name" defaultValue="kiran" /></div>
                 <div className="ep-field">
                   <label className="ep-lbl">Blood Group *</label>
-                  <select className="ep-in" id="ep-blood">
+                  <select className="ep-in" id="ep-blood" defaultValue="B+">
                     <option value="">Select blood group</option>
                     {['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].map(b => <option key={b}>{b}</option>)}
                   </select>
