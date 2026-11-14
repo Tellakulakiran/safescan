@@ -333,11 +333,9 @@ function generateStyledCard(
 }
 
 export default function CreatePage() {
-  const [allergies,   setAllergies]   = useState<string[]>(['Penicillin'])
+  const [allergies,   setAllergies]   = useState<string[]>([])
   const [meds,        setMeds]        = useState<string[]>([])
-  const [contacts,    setContacts]    = useState<Contact[]>([
-    { name: 'ram', phone: '+91 98765 43210', rel: 'father' }
-  ])
+  const [contacts,    setContacts]    = useState<Contact[]>([])
   const [showCM,      setShowCM]      = useState(false)
   const [cmName,      setCmName]      = useState('')
   const [cmPhone,     setCmPhone]     = useState('')
@@ -510,11 +508,11 @@ export default function CreatePage() {
               {/* Basic Info */}
               <div className="ep-card">
                 <div className="ep-card-hd"><span style={{color:'var(--red)'}}>👤</span> Basic Information</div>
-                <div className="ep-field"><label className="ep-lbl">Full Name *</label><input className="ep-in" type="text" id="ep-name" placeholder="Your full name" defaultValue="kiran" /></div>
+                <div className="ep-field"><label className="ep-lbl">Full Name *</label><input className="ep-in" type="text" id="ep-name" placeholder="e.g. Kiran" /></div>
                 <div className="ep-field">
                   <label className="ep-lbl">Blood Group *</label>
-                  <select className="ep-in" id="ep-blood" defaultValue="B+">
-                    <option value="">Select blood group</option>
+                  <select className="ep-in" id="ep-blood">
+                    <option value="">Select blood group (e.g. B+)</option>
                     {['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'].map(b => <option key={b}>{b}</option>)}
                   </select>
                 </div>
@@ -702,9 +700,9 @@ export default function CreatePage() {
       <div className={`cm-bg${showCM?' open':''}`} onClick={e => e.target === e.currentTarget && setShowCM(false)}>
         <div className="cm-box">
           <h3>Add Emergency Contact</h3>
-          <div className="cm-f"><label>Name *</label><input ref={cmNameRef} type="text" placeholder="Contact name" value={cmName} onChange={e=>setCmName(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveContact()} /></div>
-          <div className="cm-f"><label>Phone Number *</label><input type="tel" placeholder="+1 555 000 0000" value={cmPhone} onChange={e=>setCmPhone(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveContact()} /></div>
-          <div className="cm-f"><label>Relationship</label><input type="text" placeholder="e.g. wife, father, doctor" value={cmRel} onChange={e=>setCmRel(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveContact()} /></div>
+          <div className="cm-f"><label>Name *</label><input ref={cmNameRef} type="text" placeholder="e.g. Ram" value={cmName} onChange={e=>setCmName(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveContact()} /></div>
+          <div className="cm-f"><label>Phone Number *</label><input type="tel" placeholder="e.g. +91 98765 43210" value={cmPhone} onChange={e=>setCmPhone(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveContact()} /></div>
+          <div className="cm-f"><label>Relationship</label><input type="text" placeholder="e.g. Father, Mother, Doctor" value={cmRel} onChange={e=>setCmRel(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveContact()} /></div>
           <div className="cm-btns">
             <button className="cm-cancel" onClick={() => setShowCM(false)}>Cancel</button>
             <button className="cm-save" onClick={saveContact}>Add Contact</button>
