@@ -333,10 +333,10 @@ function generateStyledCard(
 }
 
 export default function CreatePage() {
-  const [allergies,   setAllergies]   = useState<string[]>([])
+  const [allergies,   setAllergies]   = useState<string[]>(['Penicillin'])
   const [meds,        setMeds]        = useState<string[]>([])
   const [contacts,    setContacts]    = useState<Contact[]>([
-    { name: 'ram', phone: '', rel: 'father' }
+    { name: 'ram', phone: '+91 98765 43210', rel: 'father' }
   ])
   const [showCM,      setShowCM]      = useState(false)
   const [cmName,      setCmName]      = useState('')
