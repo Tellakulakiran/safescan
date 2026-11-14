@@ -6,35 +6,44 @@ import NearbyModal from './NearbyModal'
 import BottomNav from './BottomNav'
 import AdBanner from './AdBanner'
 
-export default function MobileAppHome() {
-  const [profile, setProfile] = useState<{
-    id: string
-    name: string
-    bloodType: string
-    allergies?: string[]
-    contactName?: string
-    contactPhone?: string
-  } | null>(null)
+interface ProfileItem {
+  id: string
+  name: string
+  bloodType: string
+  allergies?: string[]
+}
 
+export default function MobileAppHome() {
+  const [profiles, setProfiles] = useState<ProfileItem[]>([])
+  const [activeIdx, setActiveIdx] = useState(0)
   const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [isNearbyOpen, setIsNearbyOpen] = useState(false)
   const [showWallpaperGuide, setShowWallpaperGuide] = useState(false)
 
   useEffect(() => {
     try {
-      const savedId = localStorage.getItem('safescan_my_id')
-      if (savedId) {
-        const name = localStorage.getItem('safescan_my_name') || 'Emergency Profile'
-        const bloodType = localStorage.getItem('safescan_my_blood') || 'Unknown'
-        let allergies: string[] = []
-        try {
-          const a = localStorage.getItem('safescan_my_allergies')
-          if (a) allergies = JSON.parse(a)
-        } catch {}
-        setProfile({ id: savedId, name, bloodType, allergies })
+      const rawList = localStorage.getItem('safescan_all_profiles')
+      let list: ProfileItem[] = []
+      if (rawList) {
+        list = JSON.parse(rawList)
+      } else {
+        const savedId = localStorage.getItem('safescan_my_id')
+        if (savedId) {
+          const name = localStorage.getItem('safescan_my_name') || 'Emergency Profile'
+          const bloodType = localStorage.getItem('safescan_my_blood') || 'Unknown'
+          let allergies: string[] = []
+          try {
+            const a = localStorage.getItem('safescan_my_allergies')
+            if (a) allergies = JSON.parse(a)
+          } catch {}
+          list = [{ id: savedId, name, bloodType, allergies }]
+        }
       }
+      setProfiles(list)
     } catch {}
   }, [])
+
+  const currentProfile = profiles[activeIdx] || null
 
   return (
     <div className="native-mobile-container">
@@ -58,8 +67,35 @@ export default function MobileAppHome() {
 
       {/* Main Content Area */}
       <main className="native-main-content">
+        {/* Profile Switcher Chips (when 1 or more profiles exist) */}
+        {profiles.length > 0 && (
+          <div className="profile-switcher-chips">
+            {profiles.map((p, idx) => (
+              <button
+                key={p.id}
+                type="button"
+                className={`profile-chip ${idx === activeIdx ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveIdx(idx)
+                  try {
+                    localStorage.setItem('safescan_my_id', p.id)
+                    localStorage.setItem('safescan_my_name', p.name)
+                    localStorage.setItem('safescan_my_blood', p.bloodType)
+                  } catch {}
+                }}
+              >
+                <span>🪪 {p.name}</span>
+                {idx === activeIdx && <span className="chip-active-dot" />}
+              </button>
+            ))}
+            <Link href="/create" className="profile-chip add-chip">
+              <span>＋ Add New ID</span>
+            </Link>
+          </div>
+        )}
+
         {/* HERO CARD: Active Medical ID or Create Prompt */}
-        {profile ? (
+        {currentProfile ? (
           <div className="active-id-card">
             <div className="id-card-glow" />
             <div className="id-card-top">
@@ -68,11 +104,11 @@ export default function MobileAppHome() {
             </div>
 
             <div className="id-card-body">
-              <h2 className="id-card-name">{profile.name}</h2>
+              <h2 className="id-card-name">{currentProfile.name}</h2>
               <div className="id-card-tags">
-                <span className="id-tag blood">🩸 {profile.bloodType}</span>
-                {profile.allergies && profile.allergies.length > 0 ? (
-                  <span className="id-tag allergy">⚠️ {profile.allergies.join(', ')}</span>
+                <span className="id-tag blood">🩸 {currentProfile.bloodType}</span>
+                {currentProfile.allergies && currentProfile.allergies.length > 0 ? (
+                  <span className="id-tag allergy">⚠️ {currentProfile.allergies.join(', ')}</span>
                 ) : (
                   <span className="id-tag safe">✓ No Allergies</span>
                 )}
@@ -80,9 +116,12 @@ export default function MobileAppHome() {
             </div>
 
             <div className="id-card-actions">
-              <Link href={`/p/${profile.id}`} className="btn-id-view">
+              <Link href={`/p/${currentProfile.id}`} className="btn-id-view">
                 <span>View Full Emergency QR & Card</span>
                 <span className="btn-arrow">→</span>
+              </Link>
+              <Link href="/create" className="btn-add-id">
+                <span>＋ Add Another Emergency ID</span>
               </Link>
             </div>
           </div>

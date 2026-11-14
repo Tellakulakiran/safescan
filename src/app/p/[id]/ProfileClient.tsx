@@ -266,6 +266,13 @@ export default function ProfileClient({ profile: initialProfile }: { profile: Pr
                   localStorage.setItem('safescan_my_name', profile.name)
                   localStorage.setItem('safescan_my_blood', profile.bloodType || 'Unknown')
                   localStorage.setItem('safescan_my_allergies', JSON.stringify(profile.allergies || []))
+
+                  const rawList = localStorage.getItem('safescan_all_profiles')
+                  let list = rawList ? JSON.parse(rawList) : []
+                  list = list.filter((p: any) => p.id !== profile.id)
+                  list.unshift({ id: profile.id, name: profile.name, bloodType: profile.bloodType || 'Unknown', allergies: profile.allergies || [] })
+                  localStorage.setItem('safescan_all_profiles', JSON.stringify(list))
+
                   setShareToast('⭐ Saved as your primary ID on this device!')
                   setTimeout(() => setShareToast(null), 3000)
                 } catch {}
