@@ -482,7 +482,7 @@ export default function CreatePage() {
       <nav className="top-nav">
         <Link href="/" className="nav-logo"><div className="logo-icon">🛡</div>SafeScan</Link>
         <ul className="nav-links">
-          <li><Link href="/create" className="nav-cta">Create Profile</Link></li>
+          <li><Link href="/" className="btn-ghost" style={{padding:'6px 14px',fontSize:'.78rem'}}>← Back to Home</Link></li>
         </ul>
       </nav>
 

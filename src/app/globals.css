@@ -199,7 +199,7 @@ body::before{
 /* ═══════════════════════════════════════
    CREATE PAGE
    ═══════════════════════════════════════ */
-.ep-wrap{max-width:480px;margin:0 auto;padding:40px 20px 120px;position:relative;z-index:1}
+.ep-wrap{max-width:480px;margin:0 auto;padding:24px 20px 200px;position:relative;z-index:1}
 .ep-hdr{display:flex;align-items:center;gap:14px;margin-bottom:8px}
 .ep-back{background:none;border:none;color:white;font-size:1.3rem;cursor:pointer;line-height:1;opacity:.8;transition:opacity .2s;padding:4px 6px;text-decoration:none}
 .ep-back:hover{opacity:1}
@@ -239,10 +239,11 @@ input[type="date"].ep-in{color-scheme:dark}
 .cc-rm:hover{color:var(--red)}
 .add-contact-btn{width:100%;background:#242424;border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:14px;color:white;font-family:'Barlow',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
 .add-contact-btn:hover{background:#2c2c2c}
-.ep-bar{position:fixed;bottom:0;left:0;right:0;z-index:150;padding:12px 20px calc(20px + var(--safe-bottom));background:linear-gradient(to top,#0a0a0a 70%,transparent)}
+.ep-bar{position:fixed;bottom:calc(64px + env(safe-area-inset-bottom, 0px));left:0;right:0;z-index:900;padding:12px 20px 14px;background:linear-gradient(to top,rgba(9,14,23,0.98) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .ep-bar-inner{max-width:480px;margin:0 auto}
-.ep-gen-btn{width:100%;background:var(--red);color:white;border:none;border-radius:12px;padding:17px;font-family:'Barlow',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px}
+.ep-gen-btn{width:100%;background:linear-gradient(135deg,#e8302a,#ff4d4d);color:white;border:none;border-radius:14px;padding:16px 20px;font-family:'Barlow',sans-serif;font-size:1.02rem;font-weight:800;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(232,48,42,.45)}
 .ep-gen-btn:hover{background:var(--red-b);transform:translateY(-1px)}
+.ep-gen-btn:active{transform:scale(0.98)}
 .ep-gen-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
 .qr-success{display:none;background:#181818;border:1px solid rgba(232,48,42,.3);border-radius:16px;padding:32px 20px;margin-top:14px;text-align:center;animation:fadeInScale .5s ease both}
 .qr-success.show{display:block}
