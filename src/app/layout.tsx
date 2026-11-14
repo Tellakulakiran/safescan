@@ -1,26 +1,36 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'SafeScan — Your Silent Guardian',
-  description: 'Emergency QR profile. One scan gives first responders everything they need.',
-  openGraph: {
-    title: 'SafeScan — Your Silent Guardian',
-    description: 'Create a free emergency QR profile in 60 seconds.',
-    type: 'website',
+  title: 'SafeScan — Emergency Medical ID',
+  description: 'Instant emergency medical ID card & QR profile for paramedics & first responders.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'SafeScan',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#090e17',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#00b4c8" />
+        <meta name="theme-color" content="#090e17" />
 
         {/* iOS PWA meta tags */}
         <meta name="apple-mobile-web-app-capable" content="yes" />

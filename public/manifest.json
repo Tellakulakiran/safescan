@@ -11,7 +11,7 @@
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#090e17",
-  "theme_color": "#00b4c8",
+  "theme_color": "#090e17",
   "prefer_related_applications": false,
   "categories": ["medical", "health", "emergency"],
   "icons": [
